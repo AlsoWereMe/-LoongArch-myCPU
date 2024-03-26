@@ -4,9 +4,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 2024/03/26 17:16:34
+// Create Date: 2024/03/26 17:32:27
 // Design Name: 
-// Module Name: pc_reg
+// Module Name: if_id
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -21,27 +21,26 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module pc_reg(
-    input  logic                clk,
-    input  logic                rst,
-    output logic[`InstAddrBus]  pc,
-    output logic                ce
-    );
+module if_id(
+    input logic         clk,
+    input logic         rst,
 
+    // 取指阶段取得的指令及其地址
+    input logic[`InstAddrBus]   if_pc,
+    input logic[`InstBus]       if_inst,
+
+    // 输出给译码阶段的指令及其地址
+    output logic[`InstAddrBus]  id_pc,
+    output logic[`InstBus]      id_inst
+    );
     always_ff @(posedge clk) begin
         if (rst == `RstEnable) begin
-            ce <= `ChipDisable;
+            id_pc   <= `ZeroWord;
+            id_inst <= `ZeroWord;
         end else begin
-            ce <= `ChipEnable;
+            id_pc   <= if_pc;
+            id_inst <= if_inst;
         end
+        
     end
-
-    always_ff @(posedge clk) begin
-        if (ce == `ChipDisable) begin
-            pc <= `ZeroWord;
-        end else begin
-            pc <= pc + 4'h4;            // 每个时钟周期，在指令存储器使能时，PC的值加4
-        end 
-    end
-    
 endmodule
