@@ -42,5 +42,5 @@
 `define DoubleRegWidth  64
 `define DoubleRegBus    63:0
 `define RegNum          32
-`define RegNumLog2      5
+`define RegNumLog2      5                   // 取指时地址实际宽度
 `define NOPRegAddr      5'b00000 
