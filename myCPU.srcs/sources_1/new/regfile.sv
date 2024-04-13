@@ -22,27 +22,27 @@
 
 
 module regfile(
-    input  logic                clk,
-    input  logic                rst,
+    input  logic                  clk,
+    input  logic                  rst,
 
     // 写端口
-    input  logic                we,    // 写使能
-    input  logic[`RegAddrBus]   waddr, // 写入的地址
-    input  logic[`RegBus]       wdata, // 写入的数据
+    input  logic                  we,    // 写使能
+    input  logic[`RegAddrWidth]   waddr, // 写入的地址
+    input  logic[`RegDataWidth]   wdata, // 写入的数据
 
     // 读端口1
-    input  logic                re1,
-    input  logic[`RegAddrBus]   raddr1,
-    output logic[`RegBus]       rdata1,
+    input  logic                  re1,
+    input  logic[`RegAddrWidth]   raddr1,
+    output logic[`RegDataWidth]   rdata1,
 
     // 读端口2
-    input  logic                re2,
-    input  logic[`RegAddrBus]   raddr2,
-    output logic[`RegBus]       rdata2
+    input  logic                  re2,
+    input  logic[`RegAddrWidth]   raddr2,
+    output logic[`RegDataWidth]   rdata2
     );
 
     // 定义寄存器
-    reg[`RegBus] regs[`RegNum];
+    reg[`RegDataWidth] regs[`RegNum];
 
     // 写端口之逻辑
     always_ff @(posedge clk) begin

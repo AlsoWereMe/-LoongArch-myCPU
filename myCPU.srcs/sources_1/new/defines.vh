@@ -16,7 +16,6 @@
 `define ChipDisable     1'b0
 
 /* 指令宏定义 */
-
 // ori
 `define EXE_ORI         6'b001101
 `define EXE_NOP         6'b000000
@@ -30,14 +29,14 @@
 `define EXE_RES_NOP     3'b000
 
 /* ROM宏定义 */
-`define InstAddrBus     31:0
-`define InstBus         31:0
+`define InstAddrWidth   31:0
+`define InstDataWidth   31:0
 `define InstMemNum      131071              // ROM实际大小，128KB
 `define InstMemNumLog2  17                  // ROM实际使用的地址线宽度，17位
 
 /* 通用寄存器宏定义 */
-`define RegAddrBus      4:0                 //  Regfile模块的地址线宽度
-`define RegBus          31:0                //  Regfile模块的数据线宽度
+`define RegAddrWidth    4:0                 //  Regfile模块的地址线宽度
+`define RegDataWidth    31:0                //  Regfile模块的数据线宽度
 `define RegWidth        32                  //  通用寄存器的宽度
 `define DoubleRegWidth  64
 `define DoubleRegBus    63:0

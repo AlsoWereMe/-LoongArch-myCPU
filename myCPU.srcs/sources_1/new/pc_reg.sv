@@ -22,10 +22,10 @@
 
 
 module pc_reg(
-    input  logic                clk,
-    input  logic                rst,
-    output logic[`InstAddrBus]  pc,
-    output logic                ce
+    input  logic                    clk,
+    input  logic                    rst,
+    output logic[`InstAddrWidth]    pc,
+    output logic                    ce
     );
 
     always_ff @(posedge clk) begin

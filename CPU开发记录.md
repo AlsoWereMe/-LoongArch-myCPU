@@ -1,6 +1,8 @@
 # CPU开发记录
 
+## CPU模块连接图
 
+​	![image-20240413153516653](C:\Users\PATHF\AppData\Roaming\Typora\typora-user-images\image-20240413153516653.png)
 
 ## defines
 
@@ -206,6 +208,200 @@ module regfile(
             rdata2 = `ZeroWord;
         end
     end
+endmodule
+```
+
+
+
+## id
+
+> 译码器核心部件,翻译指令的模块
+
+![image-20240413171115592](C:\Users\PATHF\AppData\Roaming\Typora\typora-user-images\image-20240413171115592.png)
+
+![image-20240413171122830](C:\Users\PATHF\AppData\Roaming\Typora\typora-user-images\image-20240413171122830.png)
+
+```systemverilog
+module id (
+    input logic                  rst,
+    input logic [`InstAddrWidth] pc_i,
+    input logic [`InstDataWidth] inst_i,
+
+    // 寄存器堆有两个读端口,设置两个读端口输入
+    input logic [`RegDataWidth] reg1_data_i,
+    input logic [`RegDataWidth] reg2_data_i,
+
+    // 输出给寄存堆的信息
+    /* reg1_re_o是寄存器堆第一个读端口的使能端所接收的信号 */
+    output logic                 reg1_re_o,
+    output logic                 reg2_re_o,
+    output logic [`RegAddrWidth] reg1_addr_o,
+    output logic [`RegAddrWidth] reg2_addr_o,
+
+    // 给执行阶段的信息
+    /* aluop和alusel分别代表将要进行运算的子类型和类型 */
+    /* 类型代表:逻辑,移位,算术等 */
+    /* 子类型代表:或,与,异或等 */
+    output logic [`RegAddrWidth] aluop_o,
+    output logic [`RegAddrWidth] alusel_o,
+
+    /* reg1_o和reg2_o代表的是源操作数1和2 */
+    output logic [`RegDataWidth] reg1_o,
+    output logic [`RegDataWidth] reg2_o,
+
+    /* wd_o代表指令将要写入的寄存器地址,wreg_o代表是否要写入 */
+    output logic [`RegAddrWidth] wd_o,
+    output logic                 wreg_o
+);
+
+  // 运算指令涉及的每个部分
+  logic[5:0] op   = inst_i[31:26];
+  logic[4:0] sa   = inst_i[10:6];
+  logic[5:0] func = inst_i[5:0];
+  logic[4:0] rs   = ints_i[25:21];
+  logic[4:0] rt   = inst_i[20:16];
+  logic[4:0] rd   = inst_i[15:11];
+
+  // 指令的立即数
+  logic[`RegDataWidth]    imm;
+
+  // 指令是否有效的代表
+  logic inst_valid;
+
+  // Part1:指令译码
+  always_comb begin
+    if (rst == `RstEnable) begin
+        aluop_o     = `EXE_NOP_OP;
+        alusel_o    = `EXE_RES_NOP;
+        wd_o        = `NOPRegAddr;
+        wreg_o      = `WriteDisable;
+        inst_valid  = `InstValid;
+        reg1_re_o   = `ReadDisable;
+        reg2_re_o   = `ReadDisable;
+        reg1_addr_o = `NOPRegAddr;
+        reg2_addr_o = `NOPRegAddr;
+        imm         = `ZeroWord;
+    end else begin
+        aluop_o     = `EXE_NOP_OP;
+        alusel_o    = `EXE_RES_NOP;
+        wd_o        = rd;
+        wreg_o      = `WriteDisable;    /* 此时正在进行译码,直到译码完成为止,不能进行写入寄存器的操作 */
+        inst_valid  = `InstInvalid;
+        reg1_re_o   = `ReadDisable;     /* 同理不能对寄存器堆进行读出 */
+        reg2_re_o   = `ReadDisable;
+        reg1_addr_o = rs;               /* 默认rs对应寄存器1,rt对应寄存器2 */
+        reg2_addr_o = rt;
+        imm         = `ZeroWord;
+
+        case (op)                           /* 判断当前指令类型 */
+        `EXE_ORI:   begin               
+            wreg_o  = `WriteEnable;
+
+            /* 指明指令的类型与子类型 */
+            aluop_o     = `EXE_OR_OP;
+            alusel_o    = `EXE_RES_LOGIC;
+
+            /* 读出寄存器1rs里的数据,不需要读出寄存器2rt里的数据 */
+            reg1_re_o   = `ReadEnable;
+            reg2_re_o   = `ReadDisable;
+            reg1_addr_o = rs;
+            reg2_addr_o = rt;
+
+            /* 取得立即数 */
+            imm = {16'h0,inst_i[15:0]};
+
+            /* ORI指令,计算结果写入rt */
+            wd_o = rt;
+
+            /* 指令有效 */
+            inst_valid = `InstValid;
+        end 
+        endcase
+    end
+
+  end
+
+  // Part2:确定源操作数1 reg1_o
+  always_comb begin
+    if(rst == `RstEnable) begin
+        reg1_o = `ZeroWord;
+    end else if(reg1_re_o == `ReadEnable) begin
+        reg1_o = reg1_data_i;
+    end eles if(reg1_re_o == `ReadDisable) begin
+        reg1_o = imm;
+    end else begin
+        reg1_o = `ZeroWord;
+    end
+        
+  end
+
+  // Part3:确定源操作数2 reg2_o
+  always_comb begin
+    if(rst == `RstEnable) begin
+        reg2_o = `ZeroWord;
+    end else if(reg1_re_o == `ReadEnable) begin
+        reg2_o = reg2_data_i;
+    end eles if(reg2_re_o == `ReadDisable) begin
+        reg2_o = imm;
+    end else begin
+        reg2_o = `ZeroWord;
+    end
+  end
+
+  /* Part2和Part3里的源操作数在读使能端不工作时用立即数取代 */
+  /* 实际上源操作数1的读使能端不太会不工作,因为基本没有写入rs的指令 */
+endmodule
+```
+
+
+
+## id_ex
+
+> 译码到执行阶段的中继模块,暂存id传来的信息,在时钟周期更替的时候传至执行阶段
+
+![image-20240413175202000](C:\Users\PATHF\AppData\Roaming\Typora\typora-user-images\image-20240413175202000.png)
+
+代码如下
+
+```systemverilog
+module id_ex(
+    input   logic   clk,
+    input   logic   rst,
+
+    /* 译码阶段信息 */
+    input   logic[`AluOpBus]        id_aluop,
+    input   logic[`AluSelBus]       id_alusel,
+    input   logic[`RegDataWidth]    id_reg1,
+    input   logic[`RegDataWidth]    id_reg2,
+    input   logic[`RegAddrWidth]    id_wd,
+    input   logic    id_we,
+
+    /* 执行阶段信息 */
+    output  logic[`AluOpBus]        ex_aluop,
+    output  logic[`AluSelBus]       ex_alusel,
+    output  logic[`RegDataWidth]    ex_reg1,
+    output  logic[`RegDataWidth]    ex_reg2,
+    output  logic[`RegAddrWidth]    ex_wd,
+    output  logic    ex_we
+);
+
+always_ff @(posedge clk) begin
+    if(rst == `RstEnable) begin
+        ex_aluop    <= `EXE_NOP_OP;
+        ex_alusel   <= `EXE_RES_NOP;
+        ex_reg1     <= `ZeroWord;
+        ex_reg2     <= `ZeroWord;
+        ex_wd       <= `NOPRegAddr;
+        ex_we       <= `WriteDisable;
+    end else begin
+        ex_aluop    <= id_aluop;
+        ex_alusel   <= id_alusel;
+        ex_reg1     <= id_reg1;
+        ex_reg2     <= id_reg2;
+        ex_wd       <= id_wd;
+        ex_we       <= id_we;
+    end
+end
 endmodule
 ```
 
