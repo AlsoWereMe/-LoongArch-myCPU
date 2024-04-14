@@ -405,3 +405,200 @@ end
 endmodule
 ```
 
+
+
+## ex
+
+执行阶段模块，负责运算,接口如下
+
+![image-20240414133926026](C:\Users\PATHF\AppData\Roaming\Typora\typora-user-images\image-20240414133926026.png)
+
+代码如下
+
+```systemverilog
+module ex(
+    input   logic                   rst,
+    input   logic[`AluOpBus]        aluop_i,
+    input   logic[`AluSelBus]       alusel_i,
+    input   logic[`RegDataWidth]    reg1_i,
+    input   logic[`RegDataWidth]    reg2_i,
+    input   logic[`RegAddrWidth]    wd_i,
+    input   logic                   we_i,
+
+    /* 执行后的结果在wdata_o内 */
+    output  logic[`RegDataWidth]    wdata_o,
+    output  logic[`RegAddrWidth]    wd_o,
+    output  logic                   we_o
+    );
+
+    /* 保存逻辑运算的结果 */
+    /* 随着完善会有越来越多的结果被补充 */
+    logic[`RegDataWidth]    logic_o;
+
+    // Part1:依据aluop指示的运算子类型进行计算
+    always_comb begin
+        if(rst == `RstEnable) begin
+            logic_o = `ZeroWord;
+        end else begin
+
+            /* 判断&计算 */
+            case (aluop_i)
+                `EXE_OR_OP: begin
+                    logic_o = reg1_i | reg2_i;
+                end
+                default: begin
+                    logic_o = `ZeroWord;
+                end
+            endcase
+
+        end
+    end
+
+    // Part2:依据alusel指示的运算类型,选择一个运算结果作为最终结果
+    /* ori的操作 */
+    always_comb begin
+        /* 传值 */
+        wd_o = wd_i;
+        we_o = we_i;
+
+        /* 判断具体类型 */
+        case (alusel_i)
+            `EXE_RES_LOGIC: begin
+                wdata_o = logic_o;
+            end 
+            default: begin
+                wdata_o = `ZeroWord;
+            end
+        endcase
+    end
+endmodule
+```
+
+
+
+## ex_mem
+
+> 执行-访存中继模块
+
+接口如下
+
+![image-20240414140914216](C:\Users\PATHF\AppData\Roaming\Typora\typora-user-images\image-20240414140914216.png)
+
+代码如下
+
+```systemverilog
+/* 执行-访存阶段的过渡 */
+/* 每当一个上升沿到来,传值 */
+module ex_mem(
+    input   logic                   clk,
+    input   logic                   rst,
+
+    /* 执行阶段传入信息 */
+    input   logic[`RegDataWidth]    ex_wdata,
+    input   logic[`RegAddrWidth]    ex_wd,
+    input   logic                   ex_we,
+
+    /* 传给访存阶段的信息 */
+    output  logic[`RegDataWidth]    mem_wdata,
+    output  logic[`RegAddrWidth]    mem_wd,
+    output  logic                   mem_we
+    );
+
+    always_ff @(posedge clk) begin
+        if(rst == `RstEnable) begin
+            mem_wd      <= `ZeroWord;
+            mem_wdata   <= `ZeroWord;
+            mem_we      <= `WriteDisable;
+        end else begin
+            mem_wd      <= ex_wd;
+            mem_wdata   <= ex_wdata;
+            mem_we      <= ex_we;
+        end
+    end
+endmodule
+```
+
+
+
+## mem
+
+> 访存模块
+
+接口如下
+
+![image-20240414140941824](C:\Users\PATHF\AppData\Roaming\Typora\typora-user-images\image-20240414140941824.png)
+
+代码如下
+
+```systemverilog
+/* 这个模块是存储器 */
+/* 访存阶段的操作就是访问这个模块 */
+module mem(
+    input   logic                   rst,
+
+    input   logic[`RegAddrWidth]    wd_i,
+    input   logic[`RegDataWidth]    wdata_i,
+    input   logic                   we_i,
+
+    output  logic[`RegAddrWidth]    wd_o,
+    output  logic[`RegDataWidth]    wdata_o,
+    output  logic                   we_o
+    );
+
+    always_comb begin
+        if (rst == `RstEnable) begin
+            wd_o    = `ZeroWord;
+            wdata_o = `ZeroWord;
+            we_o    = `WriteDisable;
+        end else begin
+            wd_o    = wd_i;
+            wdata_o = wdata_i;
+            we_o    = we_i;
+        end
+    end
+endmodule
+```
+
+
+
+## mem_wb
+
+> 访存-回写阶段的中继器
+
+接口如下
+
+![image-20240414142324867](C:\Users\PATHF\AppData\Roaming\Typora\typora-user-images\image-20240414142324867.png)
+
+![image-20240414142334835](C:\Users\PATHF\AppData\Roaming\Typora\typora-user-images\image-20240414142334835.png)
+
+代码如下
+
+```systemverilog
+/* 访存-写回 */
+module mem_wb(
+    input   logic                   rst,
+    input   logic                   clk,
+
+    input   logic[`RegDataWidth]    mem_wdata,
+    input   logic[`RegAddrWidth]    mem_wd,
+    input   logic                   mem_we,
+
+    output  logic[`RegDataWidth]    wb_wdata,
+    output  logic[`RegAddrWidth]    wb_wd,
+    output  logic                   wb_we
+    );
+
+    always_ff @(posedge clk) begin
+        if(rst == `RstEnable) begin
+            wb_wd    <= `ZeroWord;
+            wb_wdata <= `ZeroWord;
+            wb_we    <= `WriteDisable;
+        end else begin
+            wb_wd    <= mem_wd;
+            wb_wdata <= mem_wdata;
+            wb_we    <= mem_we;
+        end
+    end
+endmodule
+```
+
