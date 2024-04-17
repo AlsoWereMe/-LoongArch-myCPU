@@ -47,10 +47,17 @@ module regfile(
     // 写端口之逻辑
     always_ff @(posedge clk) begin
         if(rst == `RstEnable) begin
+            regs[0] = `ZeroWord;
+            regs[1] = `ZeroWord;
+            regs[2] = `ZeroWord;
+            regs[3] = `ZeroWord;
+            regs[4] = `ZeroWord;
+        end else begin
             if ((we == `WriteEnable) && (waddr != `RegNumLog2'h0)) begin                        // 若写入的寄存器不是0寄存器即可写入
                 regs[waddr] <= wdata;
             end
         end
+        
     end
 
     // 读端口1之逻辑

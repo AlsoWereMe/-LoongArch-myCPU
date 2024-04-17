@@ -3,12 +3,12 @@
 # SW Build 4029153 on Fri Oct 13 20:14:34 MDT 2023
 # IP Build 4028589 on Sat Oct 14 00:45:43 MDT 2023
 # SharedData Build 4025554 on Tue Oct 10 17:18:54 MDT 2023
-# Start of session at: Wed Mar 27 12:59:48 2024
-# Process ID: 10304
+# Start of session at: Wed Apr 17 15:31:20 2024
+# Process ID: 2144
 # Current directory: D:/FPGA_workspace/myCPU/myCPU.runs/synth_1
-# Command line: vivado.exe -log pc_reg.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source pc_reg.tcl
-# Log file: D:/FPGA_workspace/myCPU/myCPU.runs/synth_1/pc_reg.vds
+# Command line: vivado.exe -log myCPU_min_sop.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source myCPU_min_sop.tcl
+# Log file: D:/FPGA_workspace/myCPU/myCPU.runs/synth_1/myCPU_min_sop.vds
 # Journal file: D:/FPGA_workspace/myCPU/myCPU.runs/synth_1\vivado.jou
 # Running On: AlsoWereMe, OS: Windows, CPU Frequency: 3110 MHz, CPU Physical cores: 12, Host memory: 16892 MB
 #-----------------------------------------------------------
-source pc_reg.tcl -notrace
+source myCPU_min_sop.tcl -notrace

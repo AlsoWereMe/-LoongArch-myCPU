@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="synth_1" LaunchPart="xczu15eg-ffvb1156-2-i" LaunchTime="1711515584" LaunchIncrCheckpoint="$PSRCDIR/utils_1/imports/synth_1/inst_fetch.dcp">
-  <File Type="PA-TCL" Name="pc_reg.tcl"/>
-  <File Type="REPORTS-TCL" Name="pc_reg_reports.tcl"/>
-  <File Type="RDS-RDS" Name="pc_reg.vds"/>
-  <File Type="RDS-UTIL" Name="pc_reg_utilization_synth.rpt"/>
-  <File Type="RDS-UTIL-PB" Name="pc_reg_utilization_synth.pb"/>
-  <File Type="RDS-DCP" Name="pc_reg.dcp"/>
+<GenRun Id="synth_1" LaunchPart="xczu15eg-ffvb1156-2-i" LaunchTime="1713339077" LaunchIncrCheckpoint="$PSRCDIR/utils_1/imports/synth_1/inst_fetch.dcp">
+  <File Type="PA-TCL" Name="myCPU_min_sop.tcl"/>
+  <File Type="REPORTS-TCL" Name="myCPU_min_sop_reports.tcl"/>
+  <File Type="RDS-RDS" Name="myCPU_min_sop.vds"/>
+  <File Type="RDS-UTIL" Name="myCPU_min_sop_utilization_synth.rpt"/>
+  <File Type="RDS-UTIL-PB" Name="myCPU_min_sop_utilization_synth.pb"/>
+  <File Type="RDS-DCP" Name="myCPU_min_sop.dcp"/>
   <FileSet Name="sources" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1" RelGenDir="$PGENDIR/sources_1">
     <Filter Type="Srcs"/>
     <File Path="$PSRCDIR/sources_1/new/defines.vh">
@@ -15,7 +15,28 @@
         <Attr Name="IsVisible" Val="1"/>
       </FileInfo>
     </File>
-    <File Path="$PSRCDIR/sources_1/new/pc_reg.sv">
+    <File Path="$PSRCDIR/sources_1/new/ex.sv">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/ex_mem.sv">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/id.sv">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/id_ex.sv">
       <FileInfo>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="implementation"/>
@@ -24,7 +45,41 @@
     </File>
     <File Path="$PSRCDIR/sources_1/new/if_id.sv">
       <FileInfo>
-        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/inst_rom.sv">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/mem.sv">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/mem_wb.sv">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/myCPU.sv">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/pc_reg.sv">
+      <FileInfo>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="implementation"/>
         <Attr Name="UsedIn" Val="simulation"/>
@@ -32,15 +87,27 @@
     </File>
     <File Path="$PSRCDIR/sources_1/new/regfile.sv">
       <FileInfo>
-        <Attr Name="AutoDisabled" Val="1"/>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="implementation"/>
         <Attr Name="UsedIn" Val="simulation"/>
       </FileInfo>
     </File>
+    <File Path="$PSRCDIR/sources_1/new/myCPU_min_sop.sv">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/inst_rom_init.mem">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
     <Config>
       <Option Name="DesignMode" Val="RTL"/>
-      <Option Name="TopModule" Val="pc_reg"/>
+      <Option Name="TopModule" Val="myCPU_min_sop"/>
       <Option Name="TopAutoSet" Val="TRUE"/>
     </Config>
   </FileSet>

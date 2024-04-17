@@ -40,8 +40,8 @@ module id(
     /* aluop和alusel分别代表将要进行运算的子类型和类型 */
     /* 类型代表:逻辑,移位,算术等 */
     /* 子类型代表:或,与,异或等 */
-    output logic [`RegAddrWidth] aluop_o,
-    output logic [`RegAddrWidth] alusel_o,
+    output logic [`AluOpBus] aluop_o,
+    output logic [`AluSelBus] alusel_o,
 
     /* reg1_o和reg2_o代表的是源操作数1和2 */
     output logic [`RegDataWidth] reg1_o,
@@ -147,7 +147,7 @@ module id(
   always_comb begin
     if(rst == `RstEnable) begin
         reg2_o = `ZeroWord;
-    end else if(reg1_re_o == `ReadEnable) begin
+    end else if(reg2_re_o == `ReadEnable) begin
         reg2_o = reg2_data_i;
     end else if(reg2_re_o == `ReadDisable) begin
         reg2_o = imm;

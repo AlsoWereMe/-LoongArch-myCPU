@@ -109,6 +109,7 @@ module myCPU(
     );
 
     id my_id(
+        .rst(rst),
         .pc_i(id_pc_i),
         .inst_i(id_inst_i),
         .reg1_data_i(id_reg1_data_i),
