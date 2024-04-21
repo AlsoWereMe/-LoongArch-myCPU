@@ -29,6 +29,15 @@ module id(
     input logic [`RegDataWidth] reg1_data_i,
     input logic [`RegDataWidth] reg2_data_i,
 
+    // 为了解决相关问题,接收执行阶段和访存阶段的信号
+    input logic                  ex_we_i,
+    input logic[`RegAddrWidth]   ex_wd_i,
+    input logic[`RegDataWidth]   ex_wdata_i,
+
+    input logic                  mem_we_i,
+    input logic[`RegAddrWidth]   mem_wd_i,
+    input logic[`RegDataWidth]   mem_wdata_i,
+
     // 输出给寄存堆的信息
     /* reg1_re_o是寄存器堆第一个读端口的使能端所接收的信号 */
     output logic                 reg1_re_o,
@@ -134,6 +143,12 @@ module id(
   always_comb begin
     if(rst == `RstEnable) begin
         reg1_o = `ZeroWord;
+    end else if((reg1_re_o == `ReadEnable) && (ex_we_i == `WriteEnable) && (ex_wd_i == reg1_addr_o)) begin 
+        /* 检测执行阶段所得到的运算结果和是否写入的信息后，决定是否要将数据直接传给下一条指令的译码阶段 */
+        reg1_o = ex_wdata_i;
+    end else if((reg1_re_o == `ReadEnable) && (mem_we_i == `WriteEnable) && (mem_wd_i == reg1_addr_o)) begin 
+        /* 检测访存阶段所得到的运算结果和是否写入的信息后，决定是否要将数据直接传给下下一条指令的译码阶段 */
+        reg1_o = mem_wdata_i;
     end else if(reg1_re_o == `ReadEnable) begin
         reg1_o = reg1_data_i;
     end else if(reg1_re_o == `ReadDisable) begin
@@ -147,7 +162,11 @@ module id(
   always_comb begin
     if(rst == `RstEnable) begin
         reg2_o = `ZeroWord;
-    end else if(reg2_re_o == `ReadEnable) begin
+    end else if((reg2_re_o == `ReadEnable) && (ex_we_i == `WriteEnable) && (ex_wd_i == reg2_addr_o)) begin 
+        reg2_o = ex_wdata_i;
+    end else if((reg2_re_o == `ReadEnable) && (mem_we_i == `WriteEnable) && (mem_wd_i == reg2_addr_o)) begin 
+        reg2_o = mem_wdata_i;
+    end  else if(reg2_re_o == `ReadEnable) begin
         reg2_o = reg2_data_i;
     end else if(reg2_re_o == `ReadDisable) begin
         reg2_o = imm;
