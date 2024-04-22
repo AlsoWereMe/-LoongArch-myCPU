@@ -36,20 +36,28 @@ module ex(
     output  logic                   we_o
     );
 
-    /* 保存逻辑运算的结果 */
-    /* 随着完善会有越来越多的结果被补充 */
+    /* 保存逻辑与移位运算的结果 */
     logic[`RegDataWidth]    logic_o;
+    logic[`RegDataWidth]    shiftres;
 
-    // Part1:依据aluop指示的运算子类型进行计算
+    // Part1:逻辑计算
     always_comb begin
         if(rst == `RstEnable) begin
             logic_o = `ZeroWord;
         end else begin
-
             /* 判断&计算 */
             case (aluop_i)
                 `EXE_OR_OP: begin
                     logic_o = reg1_i | reg2_i;
+                end
+                `EXE_AND_OP: begin
+                    logic_o = reg1_i & reg2_i;
+                end
+                `EXE_XOR_OP: begin
+                    logic_o = reg1_i ^ reg2_i;
+                end
+                `EXE_NOR_OP: begin
+                    logic_o = ~(reg1_i | reg2_i);
                 end
                 default: begin
                     logic_o = `ZeroWord;
@@ -59,8 +67,30 @@ module ex(
         end
     end
 
-    // Part2:依据alusel指示的运算类型,选择一个运算结果作为最终结果
-    /* ori的操作 */
+    // Part2:移位运算
+    always_comb begin
+        if(rst == `RstEnable) begin
+            shiftres = `ZeroWord;
+        end else begin
+            case (aluop_i)
+                `EXE_SLL_OP: begin
+                    shiftres = reg2_i <<  reg1_i[4:0];
+                end
+                `EXE_SRL_OP: begin
+                    shiftres = reg2_i >>  reg1_i[4:0];
+                end
+                `EXE_SRA_OP: begin
+                    shiftres = reg2_i >>> reg1_i[4:0];
+                end
+                default: begin
+                    shiftres = `ZeroWord;
+                end
+            endcase
+
+        end
+    end
+
+    // Part3:依据alusel指示的运算类型,选择一个运算结果作为最终结果
     always_comb begin
         /* 传值 */
         wd_o = wd_i;
@@ -70,6 +100,9 @@ module ex(
         case (alusel_i)
             `EXE_RES_LOGIC: begin
                 wdata_o = logic_o;
+            end
+            `EXE_RES_SHIFT: begin
+                wdata_o = shiftres;
             end 
             default: begin
                 wdata_o = `ZeroWord;
