@@ -28,6 +28,12 @@
 `define EXE_SRA         6'b000011
 `define EXE_SRAV        6'b000111
 `define EXE_SYNC        6'b001111
+`define EXE_MOVN        6'b001011
+`define EXE_MOVZ        6'b001010
+`define EXE_MFHI        6'b010000
+`define EXE_MTHI        6'b001001
+`define EXE_MFLO        6'b010010
+`define EXE_MTLO        6'b010011
 
 // op
 `define EXE_ANDI        6'b001100
@@ -50,11 +56,18 @@
 `define EXE_SRL_OP      8'b00101010
 `define EXE_SRA_OP      8'b00101011
 `define EXE_SYNC_OP     8'b00101100
+`define EXE_MFHI_OP     8'b00101101
+`define EXE_MTHI_OP     8'b00101110
+`define EXE_MFLO_OP     8'b00101111
+`define EXE_MTLO_OP     8'b00110000
+`define EXE_MOVN_OP     8'b00101111
+`define EXE_MOVZ_OP     8'b00110000
 `define EXE_NOP_OP      8'b00000000
 
 // AluSel
 `define EXE_RES_LOGIC   3'b001
 `define EXE_RES_SHIFT   3'b010
+`define EXE_RES_MOVE    3'b011
 `define EXE_RES_NOP     3'b000
 
 /* ROM宏定义 */

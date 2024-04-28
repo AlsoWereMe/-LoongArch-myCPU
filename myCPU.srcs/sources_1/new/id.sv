@@ -113,9 +113,9 @@ module id(
 
         case (op)                           /* 判断当前指令类型 */
         `EXE_SPECIAL:   begin
-            case (sa)
+            case (sa)                       /* 如果是SPECIAL,先查看sa */
                 5'b00000:   begin
-                    case (func)
+                    case (func)             /* 在sa为0时,查看func */
                         `EXE_OR:   begin        // OR指令               
                             we_o  = `WriteEnable;
 
@@ -127,14 +127,10 @@ module id(
                             reg1_re_o   = `ReadEnable;
                             reg2_re_o   = `ReadEnable;
 
-                            /* OR指令,计算结果写入rd */
-                            wd_o = rd;
-
                             /* 指令有效 */
                             inst_valid = `InstValid;
                         end
                         `EXE_AND:   begin        // AND指令               
-                            wd_o        = rd;
                             we_o        = `WriteEnable;
                             aluop_o     = `EXE_AND_OP;
                             alusel_o    = `EXE_RES_LOGIC;
@@ -148,11 +144,9 @@ module id(
                             alusel_o    = `EXE_RES_LOGIC;
                             reg1_re_o   = `ReadEnable;
                             reg2_re_o   = `ReadEnable;
-                            wd_o = rd;
                             inst_valid = `InstValid;
                         end
                         `EXE_NOR:   begin        // NOR指令
-                            wd_o        = rd;               
                             we_o        = `WriteEnable;
                             aluop_o     = `EXE_NOR_OP;
                             alusel_o    = `EXE_RES_LOGIC;
@@ -161,7 +155,6 @@ module id(
                             inst_valid = `InstValid;
                         end
                         `EXE_SLLV:   begin        // SLLV指令               
-                            wd_o        = rd;
                             we_o        = `WriteEnable;
                             aluop_o     = `EXE_SLL_OP;
                             alusel_o    = `EXE_RES_SHIFT;
@@ -170,7 +163,6 @@ module id(
                             inst_valid  = `InstValid;
                         end
                         `EXE_SRLV:   begin        // SRLV指令               
-                            wd_o        = rd;
                             we_o        = `WriteEnable;
                             aluop_o     = `EXE_SRL_OP;
                             alusel_o    = `EXE_RES_SHIFT;
@@ -179,7 +171,6 @@ module id(
                             inst_valid  = `InstValid;
                         end
                         `EXE_SRAV:   begin        // SRAV指令               
-                            wd_o        = rd;
                             we_o        = `WriteEnable;
                             aluop_o     = `EXE_SRA_OP;
                             alusel_o    = `EXE_RES_SHIFT;
@@ -188,7 +179,6 @@ module id(
                             inst_valid  = `InstValid;
                         end
                         `EXE_SYNC:   begin        // SYNC指令               
-                            wd_o        = rd;
                             we_o        = `WriteEnable;
                             aluop_o     = `EXE_SYNC_OP;
                             alusel_o    = `EXE_RES_NOP;
@@ -196,8 +186,67 @@ module id(
                             reg2_re_o   = `ReadEnable;
                             inst_valid  = `InstValid;
                         end 
+                        `EXE_MFHI:  begin       // MFHI指令
+                            we_o        = `WriteEnable;
+                            aluop_o     = `EXE_MFHI_OP;
+                            alusel_o    = `EXE_RES_MOVE;
+                            reg1_re_o   = `ReadDisable;
+                            reg2_re_o   = `ReadDisable;
+                            inst_valid  = `InstValid;
+                        end
+                        `EXE_MFLO:  begin       // MFLO指令
+                            we_o        = `WriteEnable;
+                            aluop_o     = `EXE_MFLO_OP;
+                            alusel_o    = `EXE_RES_MOVE;
+                            reg1_re_o   = `ReadDisable;
+                            reg2_re_o   = `ReadDisable;
+                            inst_valid  = `InstValid;
+                        end
+                        // MTHI和MTLO指令不带有运算类型指示,他们单独处理
+                        `EXE_MTHI:  begin       // MTHI指令
+                            we_o        = `WriteDisable;
+                            aluop_o     = `EXE_MTHI_OP;
+                            reg1_re_o   = `ReadEnable;
+                            reg2_re_o   = `ReadDisable;
+                            inst_valid  = `InstValid;
+                        end
+                        `EXE_MTLO:  begin       // MTLO指令
+                            we_o        = `WriteDisable;
+                            aluop_o     = `EXE_MTLO_OP;
+                            reg1_re_o   = `ReadEnable;
+                            reg2_re_o   = `ReadDisable;
+                            inst_valid  = `InstValid;
+                        end
+                        `EXE_MOVN:  begin       // MOVN指令
+                            we_o        = `WriteEnable;
+                            aluop_o     = `EXE_MOVN_OP;
+                            alusel_o    = `EXE_RES_MOVE;
+                            reg1_re_o   = `ReadEnable;
+                            reg2_re_o   = `ReadEnable;
+                            inst_valid  = `InstValid;
+                            // 如果rt不为0,将rs写入rd
+                            if (reg2_o != `ZeroWord) begin
+                                we_o = `WriteEnable;
+                            end else begin
+                                we_o = `WriteDisable;
+                            end
+                        end
+                        `EXE_MOVZ:  begin       // MOVZ指令
+                            we_o        = `WriteEnable;
+                            aluop_o     = `EXE_MOVZ_OP;
+                            alusel_o    = `EXE_RES_MOVE;
+                            reg1_re_o   = `ReadEnable;
+                            reg2_re_o   = `ReadEnable;
+                            inst_valid  = `InstValid;
+                            // 如果rt为0,将rs写入rd
+                            if (reg2_o == `ZeroWord) begin
+                                we_o = `WriteEnable;
+                            end else begin
+                                we_o = `WriteDisable;
+                            end
+                        end
                         default: begin
-                            // 没有必要填充,其他情况后面会处理
+                            // 没有必要填充,移位指令单独处理,其他指令则无效
                         end
                     endcase
                 end 
