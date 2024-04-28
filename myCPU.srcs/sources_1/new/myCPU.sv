@@ -87,6 +87,30 @@ module myCPU(
     logic[`RegAddrWidth]    wb_wd_o;
     logic                   wb_we_o; 
 
+    /* ex -> ex_mem */
+    logic[`RegDataWidth]    ex_hi_o;
+    logic[`RegDataWidth]    ex_lo_o;
+    logic                   ex_we_hilo_o;
+
+    /* ex_mem -> mem */
+    logic[`RegDataWidth]    mem_hi_i;
+    logic[`RegDataWidth]    mem_lo_i;
+    logic                   mem_we_hilo_i;
+    
+    /* mem -> mem_wb */
+    logic[`RegDataWidth]    mem_hi_o;
+    logic[`RegDataWidth]    mem_lo_o;
+    logic                   mem_we_hilo_o;
+
+    /* mem_wb -> hilo_reg */
+    logic[`RegDataWidth]    wb_hi;
+    logic[`RegDataWidth]    wb_lo;
+    logic                   wb_we_hilo;
+
+    /* hilo_reg -> ex*/
+    logic[`RegDataWidth]    hilo_hi_o;
+    logic[`RegDataWidth]    hilo_lo_o;
+
     // 实例化模块
     pc_reg my_pc_reg(
         .clk(clk),
@@ -153,6 +177,21 @@ module myCPU(
         .reg2_i(ex_reg2_i),
         .wd_i(ex_wd_i),
         .we_i(ex_we_i),
+        // HILO
+        .hi_i(hilo_hi_o),
+        .lo_i(hilo_lo_o),
+
+        .wb_we_hilo_i(wb_we_hilo),
+        .wb_hi_i(wb_hi),
+        .wb_lo_i(wb_lo),
+
+        .mem_we_hilo_i(mem_we_hilo_o),
+        .mem_hi_i(mem_hi_o),
+        .mem_lo_i(mem_lo_o),
+
+        .hi_o(ex_hi_o),
+        .lo_o(ex_lo_o),
+        .we_hilo_o(ex_we_hilo_o),
 
         .wdata_o(ex_wdata_o),
         .wd_o(ex_wd_o),
@@ -165,10 +204,18 @@ module myCPU(
         .ex_wdata(ex_wdata_o),
         .ex_wd(ex_wd_o),
         .ex_we(ex_we_o),
-
+        // HILO
+        .ex_we_hilo(ex_we_hilo_o),
+        .ex_hi(ex_hi_o),
+        .ex_lo(ex_lo_o),
+        
         .mem_wdata(mem_wdata_i),
         .mem_wd(mem_wd_i),
-        .mem_we(mem_we_i)
+        .mem_we(mem_we_i),
+        // HILO
+        .mem_we_hilo(mem_we_hilo_i),
+        .mem_hi(mem_hi_i),
+        .mem_lo(mem_lo_i)
     );
 
     mem my_mem(
@@ -176,10 +223,18 @@ module myCPU(
         .wd_i(mem_wd_i),
         .wdata_i(mem_wdata_i),
         .we_i(mem_we_i),
+        // HILO
+        .we_hilo_i(mem_we_hilo_i),
+        .hi_i(mem_hi_i),
+        .lo_i(mem_lo_i),
 
         .wd_o(mem_wd_o),
         .wdata_o(mem_wdata_o),
-        .we_o(mem_we_o)
+        .we_o(mem_we_o),
+        // HILO
+        .we_hilo_o(mem_we_hilo_o),
+        .hi_o(mem_hi_o),
+        .lo_o(mem_lo_o)
     );
 
     mem_wb my_mem_wb(
@@ -188,10 +243,29 @@ module myCPU(
         .mem_wdata(mem_wdata_o),
         .mem_wd(mem_wd_o),
         .mem_we(mem_we_o),
+        // HILO
+        .mem_we_hilo(mem_we_hilo_o),
+        .mem_hi(mem_hi_o),
+        .mem_lo(mem_lo_o),
         
         .wb_wdata(wb_wdata_o),
         .wb_wd(wb_wd_o),
-        .wb_we(wb_we_o)
+        .wb_we(wb_we_o),
+        // HILO
+        .wb_we_hilo(wb_we_hilo),
+        .wb_hi(wb_hi),
+        .wb_lo(wb_lo)
+    );
+
+    hilo_reg my_hilo_reg(
+        .clk(clk),
+        .rst(rst),
+        .we(wb_we_hilo),
+        .hi_i(wb_hi),
+        .lo_i(wb_lo),
+
+        .hi_o(hilo_hi_o),
+        .lo_o(hilo_lo_o)
     );
 
     regfile my_reg(

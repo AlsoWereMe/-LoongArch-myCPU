@@ -28,21 +28,33 @@ module mem_wb(
     input   logic[`RegDataWidth]    mem_wdata,
     input   logic[`RegAddrWidth]    mem_wd,
     input   logic                   mem_we,
+    input   logic[`RegDataWidth]    mem_hi,
+    input   logic[`RegDataWidth]    mem_lo,
+    input   logic                   mem_we_hilo,
 
     output  logic[`RegDataWidth]    wb_wdata,
     output  logic[`RegAddrWidth]    wb_wd,
-    output  logic                   wb_we
+    output  logic                   wb_we,
+    output  logic[`RegDataWidth]    wb_hi,
+    output  logic[`RegDataWidth]    wb_lo,
+    output  logic                   wb_we_hilo,
     );
 
     always_ff @(posedge clk) begin
         if(rst == `RstEnable) begin
-            wb_wd    <= `ZeroWord;
-            wb_wdata <= `ZeroWord;
-            wb_we    <= `WriteDisable;
+            wb_wd       <= `ZeroWord;
+            wb_wdata    <= `ZeroWord;
+            wb_we       <= `WriteDisable;
+            wb_hi       <= `ZeroWord;
+            wb_lo       <= `ZeroWord;
+            wb_we_hilo  <= `WriteDisable;
         end else begin
-            wb_wd    <= mem_wd;
-            wb_wdata <= mem_wdata;
-            wb_we    <= mem_we;
+            wb_wd       <= mem_wd;
+            wb_wdata    <= mem_wdata;
+            wb_we       <= mem_we;
+            wb_hi       <= mem_hi;
+            wb_lo       <= mem_lo;
+            wb_we_hilo  <= mem_we_hilo;
         end
     end
 endmodule
