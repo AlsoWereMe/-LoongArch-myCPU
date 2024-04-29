@@ -28,16 +28,16 @@ module mem(
     input   logic[`RegAddrWidth]    wd_i,
     input   logic[`RegDataWidth]    wdata_i,
     input   logic                   we_i,
-    input   logic[`RehDataWidth]    hi_i,
-    input   logic[`RehDataWidth]    lo_i,
+    input   logic[`RegDataWidth]    hi_i,
+    input   logic[`RegDataWidth]    lo_i,
     input   logic                   we_hilo_i,
 
     output  logic[`RegAddrWidth]    wd_o,
     output  logic[`RegDataWidth]    wdata_o,
     output  logic                   we_o,
-    input   logic[`RehDataWidth]    hi_o,
-    input   logic[`RehDataWidth]    lo_o,
-    input   logic                   we_hilo_o
+    output   logic[`RegDataWidth]    hi_o,
+    output   logic[`RegDataWidth]    lo_o,
+    output   logic                   we_hilo_o
     );
 
     always_comb begin

@@ -21,9 +21,10 @@
 
 
 module myCPU_min_sop(
-    input   logic   clk,
-    input   logic   rst
+    input logic clk,
+    input logic rst
     );
+
 
     logic[`InstAddrWidth]   inst_addr;
     logic[`InstDataWidth]   inst;

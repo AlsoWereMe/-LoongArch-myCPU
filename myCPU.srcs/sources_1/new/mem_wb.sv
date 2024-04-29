@@ -37,7 +37,7 @@ module mem_wb(
     output  logic                   wb_we,
     output  logic[`RegDataWidth]    wb_hi,
     output  logic[`RegDataWidth]    wb_lo,
-    output  logic                   wb_we_hilo,
+    output  logic                   wb_we_hilo
     );
 
     always_ff @(posedge clk) begin
