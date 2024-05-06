@@ -1,24 +1,4 @@
 `timescale 1ns / 1ps
-`include "defines.vh"
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 2024/04/14 14:38:14
-// Design Name: 
-// Module Name: myCPU
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
 
 /* CPU顶层模块,在这里将每个模块连接 */
 module myCPU(

@@ -1,25 +1,4 @@
 `timescale 1ns / 1ps
-`include "defines.vh"
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 2024/03/27 12:35:46
-// Design Name: 
-// Module Name: regfile
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
 
 module regfile(
     input  logic                  clk,

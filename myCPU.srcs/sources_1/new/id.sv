@@ -1,24 +1,4 @@
 `timescale 1ns / 1ps
-`include "defines.vh"
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 2024/04/13 17:17:00
-// Design Name: 
-// Module Name: id
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
 
 module id(
     input logic                  rst,

@@ -1,24 +1,4 @@
 `timescale 1ns / 1ps
-`include "defines.vh"
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 2024/04/14 13:20:38
-// Design Name: 
-// Module Name: ex
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
 
 /* 组合电路模块,传给访存阶段的信息由下一个中继模块ex_mem操作 */
 module ex(

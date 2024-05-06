@@ -1,24 +1,4 @@
 `timescale 1ns / 1ps
-`include "defines.vh"
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 2024/03/26 17:32:27
-// Design Name: 
-// Module Name: if_id
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
 
 /* 将从存储器中取出的指令暂存起来，下一个时钟周期到来时，将其传出，也就是说，"取指"这个操作,占用一个完整的时钟周期 */
 module if_id(

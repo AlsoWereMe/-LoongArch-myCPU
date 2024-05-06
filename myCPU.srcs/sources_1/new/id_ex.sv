@@ -1,24 +1,4 @@
 `timescale 1ns / 1ps
-`include "defines.vh"
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 2024/04/13 17:26:25
-// Design Name: 
-// Module Name: id_ex
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
 
 /* id_ex模块是译码到执行阶段的中继模块 */
 /* 存储id模块向执行模块传递的信息，在下一个时钟周期到来时传给执行阶段 */
